@@ -4,8 +4,9 @@
 </p>
 
 <h2 align="center"><b>I'm Listening to This</b> </h3>
-
-*(song that I've sent you an image about detailing its metadata in a nifty way)*
+<p align="center">
+  <i>(song that I've sent you an image about detailing its metadata in a nifty way)</i>
+</p>
 <div align="center">
 
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
