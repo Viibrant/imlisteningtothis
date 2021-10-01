@@ -1,11 +1,16 @@
 from PIL import Image, ImageDraw, ImageFont
 
+imageSize = (800, 450)
+fontSize = 50
+textOffset = (10, 10)
+backgroundColour = "white"
+
 
 def generateImage(songName, artistName, albumName):
-    img = Image.new('RGB', (800, 450), color='white')
+    img = Image.new('RGB', imageSize, color=backgroundColour)
     d = ImageDraw.Draw(img)
-    font = ImageFont.truetype("Roboto/Roboto-Light.ttf", 75)
-    d.multiline_text((10, 10), "%s\n%s\n%s" %
+    font = ImageFont.truetype("Roboto/Roboto-Light.ttf", fontSize)
+    d.multiline_text(textOffset, "%s\n%s\n%s" %
                      (songName, artistName, albumName), font=font, fill=(0, 0, 0))
     img.save('outputImage.png')
 
