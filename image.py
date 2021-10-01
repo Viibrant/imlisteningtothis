@@ -2,6 +2,7 @@ from PIL import Image, ImageDraw, ImageFont
 import textwrap
 import requests
 from io import BytesIO
+import base64
 
 imageSize = (800, 450)
 fontSize = 35
@@ -23,11 +24,14 @@ def generateImage(songName: str, artistName: str, albumName: str, albumCoverURL:
     albumCover = Image.open(BytesIO(response.content)).resize(albumCoverSize)
     albumOffset = (img.height-albumCover.height)//2
     img.paste(albumCover, (img.width-albumCover.width-albumOffset, albumOffset))
-    img.save('outputImage.png')
+    buffered = BytesIO()
+    img.save(buffered, format="JPEG")
+    imgStr = base64.b64encode(buffered.getvalue())
+    return imgStr
 
 
-generateImage("Song Name", "Artist Name", "Album Name",
-              "https://cdns-images.dzcdn.net/images/cover/0275dd13762ef1bc4b680a13b834469c/264x264.jpg")
+generatedImage = generateImage("Song Name", "Artist Name", "Album Name",
+                               "https://images-na.ssl-images-amazon.com/images/I/61dGdORObgL._AC_.jpg")
 
 
 def getImage(token: str, layout="compact"):
