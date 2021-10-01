@@ -9,7 +9,7 @@ backgroundColour = "white"
 def generateImage(songName, artistName, albumName):
     img = Image.new('RGB', imageSize, color=backgroundColour)
     d = ImageDraw.Draw(img)
-    font = ImageFont.truetype("Roboto/Roboto-Light.ttf", fontSize)
+    font = ImageFont.truetype("Gotham-Font/GothamMedium.ttf", fontSize)
     d.multiline_text(textOffset, "%s\n%s\n%s" %
                      (songName, artistName, albumName), font=font, fill=(0, 0, 0))
     img.save('outputImage.png')
