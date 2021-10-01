@@ -1,7 +1,7 @@
 from PIL import Image, ImageDraw, ImageFont
 
 imageSize = (800, 450)
-fontSize = 50
+fontSize = 30
 textOffset = (25, 25)
 backgroundColour = "white"
 albumCoverSize = (400, 400)
