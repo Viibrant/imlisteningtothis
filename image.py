@@ -31,7 +31,6 @@ def generate_image(song_name: str, artist_name: str, album_name: str, album_url:
             d.text(new_line_offset, j, font=fonts[i], fill=(25, 20, 20))
             new_line_offset[1] += d.textsize(j, font=fonts[i])[1] + 10
         new_line_offset[1] += 25
-
     response = requests.get(album_url)
     album_cover = Image.open(BytesIO(response.content)).resize(album_cover_size)
     album_offset = (img.height - album_cover.height) // 2
@@ -39,8 +38,10 @@ def generate_image(song_name: str, artist_name: str, album_name: str, album_url:
     buffered = BytesIO()
     img.save(buffered, format="JPEG")
     img_str = base64.b64encode(buffered.getvalue())
+
     # Save image for testing purposes
     img.save("OutputImage.png")
+
     return img_str
 
 
