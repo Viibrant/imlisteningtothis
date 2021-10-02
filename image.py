@@ -16,7 +16,7 @@ fonts = [
 ]
 
 
-def wrap_text(text_to_wrap):
+def wrap_text(text_to_wrap: list):
     wrapped_text = textwrap.wrap(text_to_wrap, width=550 // font_size)
     return wrapped_text
 
