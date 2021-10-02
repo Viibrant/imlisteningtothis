@@ -45,9 +45,9 @@ def generate_image(song_name: str, artist_name: str, album_name: str, album_url:
 
 
 generatedImage = generate_image(
-    "Gravesinger asdkfjas;dlkfj  ;alskdjf ",
-    "Melancholy aosidfj oijdsf ",
-    "Shadow of Intentasdl f;kjas dl;fkj",
+    "Gravesinger",
+    "Melancholy",
+    "Shadow of Intent",
     "https://i.scdn.co/image/ab67616d0000b273c9952398fc889410543f27f8",
 )
 
