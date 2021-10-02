@@ -6,21 +6,32 @@ import base64
 
 image_size = (800, 450)
 font_size = 35
-text_offset = (25, 25)
+text_offset = [25, 25]
 background_colour = "white"
 album_cover_size = (400, 400)
+fonts = [
+    ImageFont.truetype("Gotham-Font/GothamLight.ttf", font_size),
+    ImageFont.truetype("Gotham-Font/GothamMedium.ttf", font_size),
+    ImageFont.truetype("Gotham-Font/GothamLightItalic.ttf", font_size),
+]
+
+
+def wrap_text(text_to_wrap):
+    wrapped_text = textwrap.wrap(text_to_wrap, width=550 // font_size)
+    return wrapped_text
 
 
 def generate_image(song_name: str, artist_name: str, album_name: str, album_url: str):
     img = Image.new("RGB", image_size, color=background_colour)
     d = ImageDraw.Draw(img)
-    font = ImageFont.truetype("Gotham-Font/GothamMedium.ttf", font_size)
-    text_to_write = [
-        textwrap.wrap(i, width=550 // font_size)
-        for i in [song_name, artist_name, album_name]
-    ]
-    text_to_write = sum(text_to_write, [])
-    d.multiline_text(text_offset, "\n".join(text_to_write), font=font, fill=(0, 0, 0))
+    text_to_write = [wrap_text(i) for i in [song_name, artist_name, album_name]]
+    new_line_offset = text_offset
+    for i, e in enumerate(text_to_write):
+        for j in e:
+            d.text(new_line_offset, j, font=fonts[i], fill=(25, 20, 20))
+            new_line_offset[1] += d.textsize(j, font=fonts[i])[1] + 10
+        new_line_offset[1] += 25
+
     response = requests.get(album_url)
     album_cover = Image.open(BytesIO(response.content)).resize(album_cover_size)
     album_offset = (img.height - album_cover.height) // 2
@@ -34,10 +45,10 @@ def generate_image(song_name: str, artist_name: str, album_name: str, album_url:
 
 
 generatedImage = generate_image(
-    "Song Name",
-    "Artist Name",
-    "Album Name",
-    "https://images-na.ssl-images-amazon.com/images/I/61dGdORObgL._AC_.jpg",
+    "Gravesinger",
+    "Melancholy",
+    "Shadow of Intent",
+    "https://i.scdn.co/image/ab67616d0000b273c9952398fc889410543f27f8",
 )
 
 
