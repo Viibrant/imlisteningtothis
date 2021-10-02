@@ -1,14 +1,17 @@
 from flask import Flask
 from flask_restful import Resource, Api
-from image import getImage
+from image import get_image
 
 app = Flask(__name__)
 api = Api(app)
-class generateImage(Resource):
+
+
+class generate_image(Resource):
     def get(self):
-        return getImage("foo")
+        return get_image("foo")
 
-api.add_resource(generateImage, '/')
 
-if __name__ == '__main__':
+api.add_resource(generate_image, "/")
+
+if __name__ == "__main__":
     app.run(debug=True)
