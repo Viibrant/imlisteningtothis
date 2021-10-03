@@ -41,6 +41,6 @@
 __pycache__
 .vscode
 .cache
-
+.env
 # Unique
 OutputImage.png
