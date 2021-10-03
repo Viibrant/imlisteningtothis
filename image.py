@@ -45,13 +45,14 @@ def generate_image(song_name: str, artist_name: str, album_name: str, album_url:
     return img_str
 
 
-generatedImage = generate_image(
-    "Gravesinger",
-    "Melancholy",
-    "Shadow of Intent",
-    "https://i.scdn.co/image/ab67616d0000b273c9952398fc889410543f27f8",
-)
-
-
 def get_image(token: str, layout="compact"):
     pass
+
+
+if __name__ == "__main__":
+    generatedImage = generate_image(
+        "Gravesinger",
+        "Melancholy",
+        "Shadow of Intent",
+        "https://i.scdn.co/image/ab67616d0000b273c9952398fc889410543f27f8",
+    )
