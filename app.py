@@ -1,18 +1,116 @@
-from flask import Flask
-from flask_restful import Resource, Api
+import os
+from flask import Flask, session, request, redirect, send_file
+from flask_session import Session
+from dotenv import load_dotenv
 from image import generate_image
-import spotify
+from spotify import parse_song
+import spotipy
+import uuid
+from base64 import b64decode
+from io import BytesIO
+import re
+
+load_dotenv()
+SPOTIPY_CLIENT_ID = os.environ.get("SPOTIPY_CLIENT_ID")
+SPOTIPY_CLIENT_SECRET = os.environ.get("SPOTIPY_CLIENT_SECRET")
 
 app = Flask(__name__)
-api = Api(app)
+app.config["SECRET_KEY"] = os.urandom(64)
+app.config["SESSION_TYPE"] = "filesystem"
+app.config["SESSION_FILE_DIR"] = "./.flask_session/"
+Session(app)
+
+caches_folder = "./.spotify_caches/"
+if not os.path.exists(caches_folder):
+    os.makedirs(caches_folder)
+
+
+def session_cache_path():
+    return caches_folder + session.get("uuid")
 
 
 @app.route("/")
 def index():
-    # TODO: add relevant calls to spotify.py
-    user = spotify.verify_user()
-    return str(spotify.get_current_track(user))
+    if not session.get("uuid"):
+        # Step 1. Visitor is unknown, give random ID
+        session["uuid"] = str(uuid.uuid4())
+
+    cache_handler = spotipy.cache_handler.CacheFileHandler(
+        cache_path=session_cache_path()
+    )
+    auth_manager = spotipy.oauth2.SpotifyOAuth(
+        scope="user-read-currently-playing",
+        cache_handler=cache_handler,
+        show_dialog=True,
+    )
+
+    if request.args.get("code"):
+        # Step 3. Being redirected from Spotify auth page
+        auth_manager.get_access_token(request.args.get("code"))
+        return redirect("/")
+
+    if not auth_manager.validate_token(cache_handler.get_cached_token()):
+        # Step 2. Display sign in link when no token
+        auth_url = auth_manager.get_authorize_url()
+        return f'<h2><a href="{auth_url}">Sign in</a></h2>'
+
+    # Step 4. Signed in, display data
+    spotify = spotipy.Spotify(auth_manager=auth_manager)
+    return (
+        f'<h2>Hi {spotify.me()["display_name"]}, '
+        f'<small><a href="/sign_out">[sign out]<a/></small></h2>'
+        f'<a href="/currently_playing">currently playing</a> | '
+        f'<img src="/currently_playing"></img>'
+    )
 
 
+@app.route("/sign_out")
+def sign_out():
+    try:
+        # Remove the CACHE file (.cache-test) so that a new user can authorize.
+        os.remove(session_cache_path())
+        session.clear()
+    except OSError as e:
+        print("Error: %s - %s." % (e.filename, e.strerror))
+    return redirect("/")
+
+
+@app.route("/currently_playing")
+def currently_playing():
+    cache_handler = spotipy.cache_handler.CacheFileHandler(
+        cache_path=session_cache_path()
+    )
+    auth_manager = spotipy.oauth2.SpotifyOAuth(cache_handler=cache_handler)
+    if not auth_manager.validate_token(cache_handler.get_cached_token()):
+        return redirect("/")
+    spotify = spotipy.Spotify(auth_manager=auth_manager)
+    track = spotify.current_user_playing_track()
+    if not track is None:
+        # image = BytesIO(
+        #     b64decode(
+        #         re.sub("data:image/jpeg;base64", "", generate_image(parse_song(track)))
+        #     )
+        # )
+        image = BytesIO()
+        image.write(generate_image(parse_song(track)))
+        image.seek(0)
+
+        print(image)
+        return send_file(image, mimetype="image/png")
+    return generate_image(parse_song(track))
+
+
+"""
+Following lines allow application to be run more conveniently with
+`python app.py` (Make sure you're using python3)
+(Also includes directive to leverage pythons threading capacity.)
+"""
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(
+        threaded=True,
+        port=int(
+            os.environ.get(
+                "PORT", os.environ.get("SPOTIPY_REDIRECT_URI", 8080).split(":")[-1]
+            )
+        ),
+    )
