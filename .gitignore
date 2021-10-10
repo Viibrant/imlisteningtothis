@@ -42,7 +42,10 @@ __pycache__
 .vscode
 .cache
 .env
-temp.py
-temp.ipynb
+.flask_session
+.spotify_caches
+
 # Unique
 OutputImage.png
+temp.py
+temp.ipynb
