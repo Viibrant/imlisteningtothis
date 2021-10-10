@@ -10,7 +10,7 @@ SCOPE = "user-read-currently-playing"
 SPOTIPY_REDIRECT_URI = "http://localhost:5000/callback"
 
 
-def verify_user() -> spotipy.Spotify:
+def verify_user():
     return spotipy.Spotify(
         auth_manager=SpotifyOAuth(
             client_id=SPOTIPY_CLIENT_ID,
@@ -21,7 +21,7 @@ def verify_user() -> spotipy.Spotify:
     )
 
 
-def parse_song(song: dict) -> dict:
+def parse_song(song: dict):
     song_name = song["item"]["name"]
     album_name = song["item"]["album"]["name"]
     artists = song["item"]["album"]["artists"]
@@ -34,5 +34,5 @@ def parse_song(song: dict) -> dict:
     }
 
 
-def get_current_track(sp: spotipy.Spotify) -> dict:
+def get_current_track(sp: spotipy.Spotify):
     return parse_song(sp.current_user_playing_track())
