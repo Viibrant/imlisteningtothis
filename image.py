@@ -24,7 +24,9 @@ def wrap_text(text_to_wrap: list):
 def generate_image(song: dict):
     print(song)
     song_name = song["song_name"]
-    artist_name = song["artists"]
+    artist_name = (
+        song["artists"][0]["name"] if type(song["artists"]) != str else song["artists"]
+    )
     album_name = song["album_name"]
     album_url = song["album_art"]
     img = Image.new("RGB", image_size, color=background_colour)
