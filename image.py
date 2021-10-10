@@ -21,7 +21,12 @@ def wrap_text(text_to_wrap: list):
     return wrapped_text
 
 
-def generate_image(song_name: str, artist_name: str, album_name: str, album_url: str):
+def generate_image(song: dict):
+    print(song)
+    song_name = song["song_name"]
+    artist_name = song["artists"][0]["name"]
+    album_name = song["album_name"]
+    album_url = song["album_art"]
     img = Image.new("RGB", image_size, color=background_colour)
     d = ImageDraw.Draw(img)
     text_to_write = [wrap_text(i) for i in [song_name, artist_name, album_name]]
@@ -45,14 +50,15 @@ def generate_image(song_name: str, artist_name: str, album_name: str, album_url:
     return img_str
 
 
-def get_image(token: str, layout="compact"):
-    pass
-
-
-if __name__ == "__main__":
-    generatedImage = generate_image(
-        "Gravesinger",
-        "Melancholy",
-        "Shadow of Intent",
-        "https://i.scdn.co/image/ab67616d0000b273c9952398fc889410543f27f8",
-    )
+# if __name__ == "__main__":
+#     # generatedImage = generate_image({
+#     #     "song_name": "Gravesinger",
+#     #     "artists": ,
+#     #     "album_name": ,
+#     #     "album_art": ,
+#     # }
+#     #     ,
+#     #     "Melancholy",
+#     #     "Shadow of Intent",
+#     #     "https://i.scdn.co/image/ab67616d0000b273c9952398fc889410543f27f8",
+#     # )
