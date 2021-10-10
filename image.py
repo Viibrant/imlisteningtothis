@@ -24,7 +24,7 @@ def wrap_text(text_to_wrap: list):
 def generate_image(song: dict):
     print(song)
     song_name = song["song_name"]
-    artist_name = song["artists"][0]["name"]
+    artist_name = song["artists"]
     album_name = song["album_name"]
     album_url = song["album_art"]
     img = Image.new("RGB", image_size, color=background_colour)
@@ -40,25 +40,25 @@ def generate_image(song: dict):
     album_cover = Image.open(BytesIO(response.content)).resize(album_cover_size)
     album_offset = (img.height - album_cover.height) // 2
     img.paste(album_cover, (img.width - album_cover.width - album_offset, album_offset))
-    buffered = BytesIO()
-    img.save(buffered, format="JPEG")
-    img_str = base64.b64encode(buffered.getvalue())
-
+    # buffered = BytesIO()
+    # img.save(buffered, format="JPEG")
+    # img_str = base64.b64encode(buffered.getvalue())
     # Save image for testing purposes
-    img.save("OutputImage.png")
+    # img.save("OutputImage.png")
 
-    return img_str
+    imgByteArr = BytesIO()
+    img.save(imgByteArr, format="JPEG")
+    imgByteArr = imgByteArr.getvalue()
+    print(imgByteArr)
+    return imgByteArr
 
 
-# if __name__ == "__main__":
-#     # generatedImage = generate_image({
-#     #     "song_name": "Gravesinger",
-#     #     "artists": ,
-#     #     "album_name": ,
-#     #     "album_art": ,
-#     # }
-#     #     ,
-#     #     "Melancholy",
-#     #     "Shadow of Intent",
-#     #     "https://i.scdn.co/image/ab67616d0000b273c9952398fc889410543f27f8",
-#     # )
+if __name__ == "__main__":
+    generatedImage = generate_image(
+        {
+            "song_name": "Gravesinger",
+            "artists": "pog",
+            "album_name": "pogijag",
+            "album_art": "https://i.scdn.co/image/ab67616d0000b273c9952398fc889410543f27f8",
+        }
+    )
