@@ -29,6 +29,13 @@ def session_cache_path():
     return caches_folder + session.get("uuid")
 
 
+def serve_pil_image(pil_img):
+    img_io = BytesIO()
+    pil_img.save(img_io, "PNG", quality=70)
+    img_io.seek(0)
+    return send_file(img_io, mimetype="image/png")
+
+
 @app.route("/")
 def index():
     if not session.get("uuid"):
@@ -59,8 +66,7 @@ def index():
     return (
         f'<h2>Hi {spotify.me()["display_name"]}, '
         f'<small><a href="/sign_out">[sign out]<a/></small></h2>'
-        f'<a href="/currently_playing">currently playing</a> | '
-        f'<img src="/currently_playing"></img>'
+        f'<img src="/playing"></img>'
     )
 
 
@@ -75,7 +81,7 @@ def sign_out():
     return redirect("/")
 
 
-@app.route("/currently_playing")
+@app.route("/playing")
 def currently_playing():
     cache_handler = spotipy.cache_handler.CacheFileHandler(
         cache_path=session_cache_path()
@@ -86,18 +92,8 @@ def currently_playing():
     spotify = spotipy.Spotify(auth_manager=auth_manager)
     track = spotify.current_user_playing_track()
     if not track is None:
-        # image = BytesIO(
-        #     b64decode(
-        #         re.sub("data:image/jpeg;base64", "", generate_image(parse_song(track)))
-        #     )
-        # )
-        image = BytesIO()
-        image.write(generate_image(parse_song(track)))
-        image.seek(0)
-
-        print(image)
-        return send_file(image, mimetype="image/png")
-    return generate_image(parse_song(track))
+        return serve_pil_image(generate_image(parse_song(track)))
+    return "None"
 
 
 """
