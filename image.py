@@ -40,17 +40,7 @@ def generate_image(song: dict):
     album_cover = Image.open(BytesIO(response.content)).resize(album_cover_size)
     album_offset = (img.height - album_cover.height) // 2
     img.paste(album_cover, (img.width - album_cover.width - album_offset, album_offset))
-    # buffered = BytesIO()
-    # img.save(buffered, format="JPEG")
-    # img_str = base64.b64encode(buffered.getvalue())
-    # Save image for testing purposes
-    # img.save("OutputImage.png")
-
-    imgByteArr = BytesIO()
-    img.save(imgByteArr, format="JPEG")
-    imgByteArr = imgByteArr.getvalue()
-    print(imgByteArr)
-    return imgByteArr
+    return img
 
 
 if __name__ == "__main__":
