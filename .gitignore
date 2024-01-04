@@ -1,51 +1,36 @@
-# File created using '.gitignore Generator' for Visual Studio Code: https://bit.ly/vscode-gig
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,linux
-# Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,linux
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
 
-### Linux ###
-*~
+# testing
+/coverage
 
-# temporary files which can be created if a process still has a handle open of a deleted file
-.fuse_hidden*
+# next.js
+/.next/
+/out/
 
-# KDE directory preferences
-.directory
+# production
+/build
 
-# Linux trash folder which might appear on any partition or disk
-.Trash-*
+# misc
+.DS_Store
+*.pem
 
-# .nfs files are created when an open file is removed but is still being accessed
-.nfs*
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-### VisualStudioCode ###
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-*.code-workspace
+# local env files
+.env*.local
 
-# Local History for Visual Studio Code
-.history/
+# vercel
+.vercel
 
-### VisualStudioCode Patch ###
-# Ignore all local history of files
-.history
-.ionide
-
-# End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,linux
-
-# Custom rules (everything added below won't be overriden by 'Generate .gitignore File' if you use 'Update' option)
-
-__pycache__
-.vscode
-.cache
-.env
-.flask_session
-.spotify_caches
-
-# Unique
-OutputImage.png
-temp.py
-temp.ipynb
+# typescript
+*.tsbuildinfo
+next-env.d.ts
