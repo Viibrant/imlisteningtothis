@@ -28,16 +28,18 @@ export default function Home() {
   });
 
   return (
-    <Box w="75%" m="auto" p={4}>
+    <Box w="75%" m="auto">
       <VStack>
-        <HStack>
-          <Button colorScheme="purple">Authenticate</Button>
-          <Button colorScheme="purple">Get Song</Button>
-        </HStack>
-
-        <Heading>Generated image:</Heading>
-        <MyImage src="" alt="TEST" />
-        <Stepper index={activeStep} w={"75%"} colorScheme="purple" mt={50}>
+        <Stepper
+          index={activeStep}
+          w={"75%"}
+          colorScheme="purple"
+          mt={25}
+          mb={25}
+          bg={"gray.100"}
+          padding={7}
+          borderRadius={10}
+        >
           {steps.map((step, index) => (
             <Step key={index}>
               <StepIndicator>
@@ -57,6 +59,13 @@ export default function Home() {
             </Step>
           ))}
         </Stepper>
+        <HStack>
+          <Button colorScheme="purple">Authenticate</Button>
+          <Button colorScheme="purple">Get Song</Button>
+        </HStack>
+
+        <Heading mt={10}>Generated Image</Heading>
+        <MyImage src="" alt="TEST" />
       </VStack>
     </Box>
   );
