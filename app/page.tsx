@@ -1,5 +1,5 @@
 "use client";
-import { Box, Button, HStack, Heading, VStack } from "@chakra-ui/react";
+import { Box, Button, ButtonGroup, Heading, VStack } from "@chakra-ui/react";
 import MyImage from "./components/MyImage";
 import React from "react";
 import {
@@ -12,6 +12,7 @@ import {
   StepStatus,
   StepTitle,
   Stepper,
+  Divider,
 } from "@chakra-ui/react";
 
 import { useSteps } from "@chakra-ui/react";
@@ -34,8 +35,8 @@ export default function Home() {
           index={activeStep}
           w={"75%"}
           colorScheme="purple"
-          mt={25}
-          mb={25}
+          mt={5}
+          mb={2}
           bg={"gray.100"}
           padding={7}
           borderRadius={10}
@@ -59,12 +60,13 @@ export default function Home() {
             </Step>
           ))}
         </Stepper>
-        <HStack>
+        <ButtonGroup mb={2}>
           <Button colorScheme="purple">Authenticate</Button>
           <Button colorScheme="purple">Get Song</Button>
-        </HStack>
+        </ButtonGroup>
+        <Divider width={"75%"} />
 
-        <Heading mt={10}>Generated Image</Heading>
+        <Heading mt={3}>Generated Image</Heading>
         <MyImage src="" alt="TEST" />
       </VStack>
     </Box>
