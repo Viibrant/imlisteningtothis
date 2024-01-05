@@ -6,7 +6,7 @@ const Header: React.FC = () => {
     <Box bgColor={"#805AD5"} color="white" py={4}>
       <Flex maxW="container.lg" mx="auto" px={4} align="center" justify="space-between">
         <Link href="/">
-          <Text fontSize="2xl" fontWeight="bold">
+          <Text fontSize="4xl" fontWeight="bold">
             I&apos;m Listening to This
             <PiWaveformBold
               style={{
