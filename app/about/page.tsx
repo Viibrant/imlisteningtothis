@@ -3,7 +3,7 @@ import React from "react";
 
 const About = () => {
   return (
-    <Box w="75%" m="auto" p={4}>
+    <Box w="50%" m="auto" p={4}>
       <Heading as="h1" size="xl" mb={4}>
         About
       </Heading>

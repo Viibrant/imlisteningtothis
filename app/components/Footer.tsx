@@ -1,4 +1,4 @@
-import { Box, Link, Text } from "@chakra-ui/react";
+import { Box, Link, Text, Icon } from "@chakra-ui/react";
 import { FaGithub } from "react-icons/fa";
 
 const Footer = () => {
@@ -8,16 +8,16 @@ const Footer = () => {
       <Text fontSize="sm" mt={2}>
         Licensed under the MIT License.
       </Text>
-      <Text fontSize="sm">
+      <Text fontSize="sm" mt={2}>
         Made by{" "}
-        <Link href="https://github.com/Viibrant" color="blue.500">
+        <Link href="https://github.com/Viibrant" color="blue.500" isExternal>
           Viibrant{" "}
         </Link>
         and{" "}
-        <Link href="https://github.com/A9-dev" color="blue.500">
+        <Link href="https://github.com/A9-dev" color="blue.500" isExternal>
           A9-dev
         </Link>{" "}
-        -{" "}
+        /{" "}
         <Link
           href="https://github.com/Viibrant/imlisteningtothis"
           color="blue.500"
@@ -26,7 +26,9 @@ const Footer = () => {
           isExternal
         >
           GitHub Repository
-          <FaGithub style={{ marginLeft: "0.5rem" }} />
+          <FaGithub
+            style={{ display: "inline-block", verticalAlign: "middle", marginLeft: "0.5rem" }}
+          />
         </Link>
       </Text>
     </Box>
