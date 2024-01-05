@@ -1,12 +1,21 @@
 import { Box, Flex, Text, Link } from "@chakra-ui/react";
 import React from "react";
+import { PiWaveformBold } from "react-icons/pi";
 const Header: React.FC = () => {
   return (
-    <Box bg="gray.800" color="white" py={4}>
+    <Box bg="green.700" color="white" py={4}>
       <Flex maxW="container.lg" mx="auto" px={4} align="center" justify="space-between">
         <Link href="/">
-          <Text fontSize="lg" fontWeight="bold">
-            ImListeningToThis
+          <Text fontSize="2xl" fontWeight="bold">
+            I'm Listening to This
+            <PiWaveformBold
+              style={{
+                display: "inline-block",
+                verticalAlign: "middle",
+                marginLeft: "10px",
+                fontSize: "30px",
+              }}
+            />
           </Text>
         </Link>
         <Flex>
