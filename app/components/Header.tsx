@@ -7,7 +7,7 @@ const Header: React.FC = () => {
       <Flex maxW="container.lg" mx="auto" px={4} align="center" justify="space-between">
         <Link href="/">
           <Text fontSize="2xl" fontWeight="bold">
-            I'm Listening to This
+            I&apos;m Listening to This
             <PiWaveformBold
               style={{
                 display: "inline-block",
