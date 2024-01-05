@@ -1,10 +1,9 @@
 import { Box, Heading, Text } from "@chakra-ui/react";
-import React, { FC } from "react";
-import Header from "../components/Header";
+import React from "react";
 
-const About: FC = () => {
+const About = () => {
   return (
-    <Box p={4}>
+    <Box w="75%" m="auto" p={4}>
       <Heading as="h1" size="xl" mb={4}>
         About
       </Heading>

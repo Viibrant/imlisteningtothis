@@ -1,7 +1,7 @@
 "use client";
-import { Image, Skeleton } from "@chakra-ui/react";
+import { Box, Image, Skeleton } from "@chakra-ui/react";
 import { useState } from "react";
-
+import React from "react";
 const MyImage = ({ src, alt }: { src: string; alt: string }) => {
   const [isLoading, setIsLoading] = useState(true);
 
@@ -10,10 +10,10 @@ const MyImage = ({ src, alt }: { src: string; alt: string }) => {
   };
 
   return (
-    <>
-      {isLoading && <Skeleton height="200px" />}
+    <Box>
+      {isLoading && <Skeleton height="200px" width="500px" />}
       <Image src={src} alt={alt} onLoad={handleImageLoad} display={isLoading ? "none" : "block"} />
-    </>
+    </Box>
   );
 };
 
