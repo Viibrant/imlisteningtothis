@@ -3,7 +3,7 @@ import React from "react";
 import { PiWaveformBold } from "react-icons/pi";
 const Header: React.FC = () => {
   return (
-    <Box bg="green.700" color="white" py={4}>
+    <Box bgColor={"#805AD5"} color="white" py={4}>
       <Flex maxW="container.lg" mx="auto" px={4} align="center" justify="space-between">
         <Link href="/">
           <Text fontSize="2xl" fontWeight="bold">
