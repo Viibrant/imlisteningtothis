@@ -1,0 +1,27 @@
+name: Lint Code Base
+
+on: [pull_request]
+
+jobs:
+  eslint:
+    name: runner / eslint
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'  # You can specify your Node.js version here
+
+    - name: Install Dependencies
+      run: npm install  # or yarn install, depending on your project
+
+    - name: Run eslint with reviewdog
+      uses: reviewdog/action-eslint@v1.21.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        reporter: github-pr-review  # or github-pr-check
+        eslint_flags: 'src/**/*.js'  # Update this with your ESLint target files
