@@ -17,7 +17,7 @@ import {
 
 import { useSteps } from "@chakra-ui/react";
 export default function Home() {
-  const steps = [
+  const steps: { title: string; description?: string }[] = [
     { title: "Authenticate with Spotify" },
     { title: "Get Song", description: "Play a song on Spotify" },
     { title: "Generate Image" },
@@ -28,35 +28,46 @@ export default function Home() {
     count: steps.length,
   });
 
-  const generateRandomString = (length) => {
-    const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const generateRandomString = (length: number): string => {
+    const possible =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     const values = crypto.getRandomValues(new Uint8Array(length));
     return values.reduce((acc, x) => acc + possible[x % possible.length], "");
   };
 
-  const sha256 = async (plain) => {
+  const sha256 = async (plain: string): Promise<ArrayBuffer> => {
     const encoder = new TextEncoder();
     const data = encoder.encode(plain);
     return window.crypto.subtle.digest("SHA-256", data);
   };
-  const base64encode = (input) => {
+  const base64encode = (input: ArrayBuffer): string => {
     return btoa(String.fromCharCode(...new Uint8Array(input)))
       .replace(/=/g, "")
       .replace(/\+/g, "-")
       .replace(/\//g, "_");
   };
 
-  const handleAuthenticate = async () => {
+  const handleAuthenticate = async (): Promise<void> => {
     const codeVerifier = generateRandomString(64);
     const hashed = await sha256(codeVerifier);
     const codeChallenge = base64encode(hashed);
 
-    const url = new URL("https://accounts.spotify.com/authorize");
+    window.localStorage.setItem("code_verifier", codeVerifier);
+
     const clientId = "YOUR_CLIENT_ID";
     const redirectUri = "http://localhost:3000";
 
     const scope = "user-read-private user-read-email";
     const authUrl = new URL("https://accounts.spotify.com/authorize");
+
+    const params = {
+      client_id: "YOUR_CLIENT_ID",
+      response_type: "code",
+      redirect_uri: "http://localhost:3000",
+      code_challenge_method: "S256",
+      code_challenge: codeChallenge,
+      scope: "user-read-private user-read-email",
+    };
   };
 
   return (
