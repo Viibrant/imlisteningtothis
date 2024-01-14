@@ -29,8 +29,7 @@ export default function Home() {
   });
 
   const generateRandomString = (length: number): string => {
-    const possible =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     const values = crypto.getRandomValues(new Uint8Array(length));
     return values.reduce((acc, x) => acc + possible[x % possible.length], "");
   };
@@ -54,20 +53,20 @@ export default function Home() {
 
     window.localStorage.setItem("code_verifier", codeVerifier);
 
-    const clientId = "YOUR_CLIENT_ID";
-    const redirectUri = "http://localhost:3000";
+    const clientId = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID || "";
+    const redirectUri = "http://localhost:3000/callback";
 
-    const scope = "user-read-private user-read-email";
-    const authUrl = new URL("https://accounts.spotify.com/authorize");
+    const scope = "user-read-currently-playing";
 
-    const params = {
-      client_id: "YOUR_CLIENT_ID",
+    const params = new URLSearchParams({
+      client_id: clientId,
       response_type: "code",
-      redirect_uri: "http://localhost:3000",
+      redirect_uri: redirectUri,
       code_challenge_method: "S256",
       code_challenge: codeChallenge,
-      scope: "user-read-private user-read-email",
-    };
+      scope,
+    });
+    document.location = `https://accounts.spotify.com/authorize?${params.toString()}`;
   };
 
   return (
