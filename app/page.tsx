@@ -1,6 +1,7 @@
 "use client";
 import { Box, Button, ButtonGroup, Heading, VStack } from "@chakra-ui/react";
 import MyImage from "./components/MyImage";
+import { handleAuthenticate } from "./pkce";
 import React from "react";
 import {
   Step,
@@ -28,46 +29,6 @@ export default function Home() {
     count: steps.length,
   });
 
-  const generateRandomString = (length: number): string => {
-    const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    const values = crypto.getRandomValues(new Uint8Array(length));
-    return values.reduce((acc, x) => acc + possible[x % possible.length], "");
-  };
-
-  const sha256 = async (plain: string): Promise<ArrayBuffer> => {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(plain);
-    return window.crypto.subtle.digest("SHA-256", data);
-  };
-  const base64encode = (input: ArrayBuffer): string => {
-    return btoa(String.fromCharCode(...new Uint8Array(input)))
-      .replace(/=/g, "")
-      .replace(/\+/g, "-")
-      .replace(/\//g, "_");
-  };
-
-  const handleAuthenticate = async (): Promise<void> => {
-    const codeVerifier = generateRandomString(64);
-    const hashed = await sha256(codeVerifier);
-    const codeChallenge = base64encode(hashed);
-
-    window.localStorage.setItem("code_verifier", codeVerifier);
-
-    const clientId = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID || "";
-    const redirectUri = "http://localhost:3000/callback";
-
-    const scope = "user-read-currently-playing";
-
-    const params = new URLSearchParams({
-      client_id: clientId,
-      response_type: "code",
-      redirect_uri: redirectUri,
-      code_challenge_method: "S256",
-      code_challenge: codeChallenge,
-      scope,
-    });
-    document.location = `https://accounts.spotify.com/authorize?${params.toString()}`;
-  };
 
   return (
     <Box w="75%" m="auto">
