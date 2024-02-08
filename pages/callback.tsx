@@ -6,18 +6,21 @@ export default function Callback() {
 
     useEffect(() => {
         const code = router.query.code as string;
+        const codeVerifier = localStorage.getItem('code_verifier');
 
-        if (code) {
+
+        if (code && codeVerifier) {
             // Redirect the code to the server
             fetch('/api/exchange_token', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ code }),
+                body: JSON.stringify({ code, codeVerifier }),
             })
                 .then((response) => response.json())
                 .then((data) => {
+                    console.log('Success:', data);
                     //TODO: Handle the response
                     router.push('/');
                 })
