@@ -3,18 +3,12 @@ import { NextApiRequest, NextApiResponse } from 'next';
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         const { code, codeVerifier } = req.body;
-        console.log('Code:', code);
 
         //? There might be a chance that these environment variables are not set
         //? If that's the case, the server will throw an error
         //? Might be a better way to handle this
         const clientId = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID!;
         const redirectUri = process.env.REDIRECT_URI!;
-
-        console.log('Client ID:', clientId);
-        console.log('Redirect URI:', redirectUri);
-        console.log('Code Verifier:', codeVerifier);
-        console.log('Code:', code);
 
 
         // Prepare the request for token exchange

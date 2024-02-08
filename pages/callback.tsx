@@ -21,6 +21,11 @@ export default function Callback() {
                 .then((response) => response.json())
                 .then((data) => {
                     console.log('Success:', data);
+
+                    // Store the tokens in local storage
+                    localStorage.setItem('access_token', data.accessToken);
+                    localStorage.setItem('refresh_token', data.refreshToken);
+
                     //TODO: Handle the response
                     router.push('/');
                 })
