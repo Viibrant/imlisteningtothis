@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "nodemon server.js",
+    "dev": "next dev",
     "build": "next build",
-    "start": "NODE_ENV=production node server.js",
+    "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
@@ -16,6 +16,8 @@
     "express": "^4.18.2",
     "framer-motion": "^10.17.9",
     "next": "14.0.4",
+    "next-iron-session": "^4.2.0",
+    "node-fetch": "^3.3.2",
     "react": "^18",
     "react-dom": "^18",
     "react-icons": "^4.12.0",

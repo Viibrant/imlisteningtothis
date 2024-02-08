@@ -1,7 +1,8 @@
 "use client";
-import { Box, Button, ButtonGroup, Heading, VStack } from "@chakra-ui/react";
+import { Box, Button, ButtonGroup, Heading, VStack, Text } from "@chakra-ui/react";
 import MyImage from "./components/MyImage";
-import React from "react";
+import { handleAuthenticate } from "./pkce";
+import React, { useState, useEffect } from "react";
 import {
   Step,
   StepDescription,
@@ -14,10 +15,10 @@ import {
   Stepper,
   Divider,
 } from "@chakra-ui/react";
-
 import { useSteps } from "@chakra-ui/react";
+
 export default function Home() {
-  const steps = [
+  const steps: { title: string; description?: string }[] = [
     { title: "Authenticate with Spotify" },
     { title: "Get Song", description: "Play a song on Spotify" },
     { title: "Generate Image" },
@@ -27,6 +28,39 @@ export default function Home() {
     index: 1,
     count: steps.length,
   });
+
+  const [currentSong, setCurrentSong] = useState(null);
+
+  // Function to fetch the current playing song
+  const getCurrentSong = () => {
+    const accessToken = localStorage.getItem('access_token');
+    if (!accessToken) {
+      console.log("User not authenticated.");
+      return;
+    }
+
+    // Fetch current playing song using the access token
+    fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`
+      }
+    })
+      .then(response => {
+        if (response.status === 204 || response.status > 400) {
+          throw new Error('No content or error');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Current song:', data);
+        //* This is where we process the data and display it
+        setCurrentSong(data.item.name);
+      })
+      .catch(error => {
+        console.error('Error fetching current song:', error);
+        setCurrentSong("Could not fetch current song");
+      });
+  };
 
   return (
     <Box w="75%" m="auto">
@@ -60,12 +94,25 @@ export default function Home() {
             </Step>
           ))}
         </Stepper>
-        <ButtonGroup mb={2}>
-          <Button colorScheme="purple">Authenticate</Button>
-          <Button colorScheme="purple">Get Song</Button>
-        </ButtonGroup>
         <Divider width={"75%"} />
 
+        {currentSong ? (
+          <>
+            <Heading mt={3}>Currently Playing Song</Heading>
+            <Text>{currentSong}</Text>
+          </>
+        ) : (
+          <Text>Please authenticate to see the current playing song.</Text>
+        )}
+
+        <ButtonGroup mb={2}>
+          <Button colorScheme="purple" onClick={handleAuthenticate}>
+            Authenticate
+          </Button>
+          <Button colorScheme="purple" onClick={getCurrentSong}>
+            Get Song
+          </Button>
+        </ButtonGroup>
         <Heading mt={3}>Generated Image</Heading>
         <MyImage src="" alt="TEST" />
       </VStack>

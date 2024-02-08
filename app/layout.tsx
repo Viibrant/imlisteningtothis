@@ -1,5 +1,5 @@
 // app/layout.tsx
-import Header from "./components/Header";
+import Navbar from "./components/Navbar";
 import { Providers } from "./providers";
 import Footer from "./components/Footer";
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -7,7 +7,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body>
         <Providers>
-          <Header />
+          <Navbar />
           {children}
           <Footer />
         </Providers>
