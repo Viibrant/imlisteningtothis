@@ -29,7 +29,7 @@ export default function Home() {
     count: steps.length,
   });
 
-  const [currentSong, setCurrentSong] = useState(null);
+  const [currentSong, setCurrentSong] = useState<string | null>(null);
 
   // Function to fetch the current playing song
   const getCurrentSong = () => {
