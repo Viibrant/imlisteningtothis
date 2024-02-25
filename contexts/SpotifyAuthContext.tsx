@@ -38,13 +38,41 @@ export const SpotifyAuthProvider: React.FC<SpotifyAuthProviderProps> = ({ childr
     // Function to refresh the access token. Implement this according to your backend setup.
     // This function should request a new access token using the refresh token and update the context.
     const refreshAccessToken = async () => {
-        // Placeholder for refresh logic
-        // You should replace this with a call to your server or directly to Spotify's API if you're handling it client-side.
+        const refreshToken = localStorage.getItem('refresh_token');
+
+        if (!refreshToken) {
+            //TODO: Handle the case where there's no refresh token available
+            console.error('No refresh token available');
+            return;
+        }
+
         console.log('Refreshing access token...');
-        // Example:
-        // const newAccessToken = 'new_access_token';
-        // const newExpiresAt = Date.now() + 3600 * 1000; // 1 hour from now
-        // setAuthState(prev => ({ ...prev, accessToken: newAccessToken, expiresAt: newExpiresAt }));
+
+        try {
+            const response = await fetch("/api/refresh_token", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ refreshToken }),
+            });
+
+            const data = await response.json();
+
+            if (data.error) {
+                console.error('Error refreshing token:', data.error);
+                //TODO: Handle the error
+                return;
+            }
+
+            const { accessToken, expiresAt } = data;
+            const expiresAtDate = Date.now() + expiresAt * 1000;
+
+            setAuthState((prev) => ({ ...prev, accessToken, expiresAt: expiresAtDate }));
+        } catch (error) {
+            console.error('Error:', error);
+            //TODO: Handle the error, e.g. redirect to login page
+        };
     };
 
     // Automatically refresh the access token when it expires
