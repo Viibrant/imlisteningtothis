@@ -3,6 +3,7 @@ import { Box, Button, ButtonGroup, Heading, VStack, Text } from "@chakra-ui/reac
 import MyImage from "./components/MyImage";
 import { handleAuthenticate } from "./pkce";
 import React, { useState, useEffect } from "react";
+import { useSpotifyAuth } from "@/contexts/SpotifyAuthContext";
 import {
   Step,
   StepDescription,
@@ -18,6 +19,8 @@ import {
 import { useSteps } from "@chakra-ui/react";
 
 export default function Home() {
+  const { isAuth, authState } = useSpotifyAuth();
+
   const steps: { title: string; description?: string }[] = [
     { title: "Authenticate with Spotify" },
     { title: "Get Song", description: "Play a song on Spotify" },
@@ -33,7 +36,7 @@ export default function Home() {
 
   // Function to fetch the current playing song
   const getCurrentSong = () => {
-    const accessToken = localStorage.getItem('access_token');
+    const accessToken = authState.accessToken;
     if (!accessToken) {
       console.log("User not authenticated.");
       return;
@@ -46,8 +49,13 @@ export default function Home() {
       }
     })
       .then(response => {
-        if (response.status === 204 || response.status > 400) {
+        if (response.status > 400) {
           throw new Error('No content or error');
+        } else if (response.status === 204) {
+          //* 204: No Content success
+          //* No currently played music.
+          //TODO: Display notification? Should we default to no song playing?
+          console.warn("No music playing!");
         }
         return response.json();
       })
@@ -96,7 +104,7 @@ export default function Home() {
         </Stepper>
         <Divider width={"75%"} />
 
-        {currentSong ? (
+        {isAuth() ? (
           <>
             <Heading mt={3}>Currently Playing Song</Heading>
             <Text>{currentSong}</Text>
@@ -106,12 +114,16 @@ export default function Home() {
         )}
 
         <ButtonGroup mb={2}>
-          <Button colorScheme="purple" onClick={handleAuthenticate}>
-            Authenticate
-          </Button>
-          <Button colorScheme="purple" onClick={getCurrentSong}>
-            Get Song
-          </Button>
+
+          {isAuth() ? (
+            <Button colorScheme="purple" onClick={getCurrentSong}>
+              Get Song
+            </Button>) : (
+            <Button colorScheme="purple" onClick={handleAuthenticate}>
+              Authenticate
+            </Button>
+          )
+          }
         </ButtonGroup>
         <Heading mt={3}>Generated Image</Heading>
         <MyImage src="" alt="TEST" />

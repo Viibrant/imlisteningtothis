@@ -1,17 +1,29 @@
 "use client";
 import { Box, Flex, Text, Link, Button } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { PiWaveformBold } from "react-icons/pi";
+import { getSpotifyUserProfile } from "@/services/spotifyService";
+import { useSpotifyAuth } from "@/contexts/SpotifyAuthContext";
+
 
 export default function Navbar() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { isAuth, authState } = useSpotifyAuth();
   const [userName, setUserName] = useState("");
 
   const handleSpotifyConnect = () => {
-    //TODO: Spotify authentication logic
-    setIsAuthenticated(true);
+    //TODO: Authenticate Spotify
     setUserName("SpotifyUser");
   };
+
+  // Fetch the user's profile when the component mounts
+  useEffect(() => {
+    if (isAuth() && authState.accessToken) {
+
+      getSpotifyUserProfile(authState.accessToken).then((data) => {
+        setUserName(data.display_name);
+      });
+    }
+  }, [authState.accessToken, isAuth]);
 
   return (
     <Box bgColor={"#805AD5"} color="white" py={4}>
@@ -36,7 +48,7 @@ export default function Navbar() {
           <Link href="/about" mx={2}>
             About
           </Link>
-          {isAuthenticated ? (
+          {isAuth() ? (
             <Text mx={2}>Welcome, {userName}</Text>
           ) : (
             <Button colorScheme="purple" onClick={handleSpotifyConnect}>

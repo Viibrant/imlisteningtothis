@@ -39,7 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
 
             // On success, send back the tokens to the client or handle them as needed
-            res.status(200).json({ accessToken: data.access_token, refreshToken: data.refresh_token });
+            res.status(200).json({ accessToken: data.access_token, refreshToken: data.refresh_token, expiresIn: data.expires_in });
         } catch (error) {
             console.error('Error:', error);
             res.status(500).json({ error: 'Internal server error' });
