@@ -30,7 +30,7 @@ export default function Navbar() {
       <Flex maxW="container.lg" mx="auto" px={4} align="center" justify="space-between">
         <Link href="/">
           <Text fontSize="4xl" fontWeight="bold">
-            I'm Listening to This
+            {"Im Listening to This"}
             <PiWaveformBold
               style={{
                 display: "inline-block",
