@@ -24,4 +24,4 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         reporter: github-pr-review  # or github-pr-check
-        eslint_flags: '*.js'  # Update this with your ESLint target files
+        eslint_flags: '. --ext .js,.jsx,.ts,.tsx'
