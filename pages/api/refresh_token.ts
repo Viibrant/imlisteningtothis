@@ -28,23 +28,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 grant_type: 'refresh_token',
                 refresh_token: refreshToken,
                 client_id: clientId,
+                client_secret: clientSecret,  // Only used server-side
             }),
         });
 
         const data = await response.json();
 
         if (!response.ok) {
+            if (data.error === 'invalid_grant') {
+                // Specific handling for revoked token
+                console.error('Refresh token was revoked, prompting re-authentication:', data);
+                res.status(401).json({ error: 'Authentication required', details: data.error_description });
+                return;
+            }
             throw new Error(data.error || 'Failed to refresh token');
         }
 
         res.status(200).json({
             accessToken: data.access_token,
             expiresIn: data.expires_in,
-            refreshToken: data.refresh_token,
+            refreshToken: data.refresh_token || refreshToken,  // Keep old refreshToken if not updated
         });
-    } catch (error) {
-        console.error('Error refreshing token:', error);
-        res.status(500).json({ error: 'Failed to refresh token' });
+    } catch (error: any) {
+        console.error('Error during token refresh:', error);
+        res.status(500).json({ error: 'Failed to refresh token', details: error.message });
     }
-
 }

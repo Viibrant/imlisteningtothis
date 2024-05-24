@@ -36,15 +36,24 @@ interface SpotifyAuthProviderProps {
 export const SpotifyAuthProvider: React.FC<SpotifyAuthProviderProps> = ({ children }) => {
     // TODO: Add isLoading state, for on mount, and when refreshing token
     const [authState, setAuthState] = useState<AuthState>(initialAuthState);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
 
     const isAuth = () => !!authState.accessToken && !!authState.refreshToken;
     const refreshAccessToken = useCallback(async () => {
+
+        // Check if refresh token exists...
         if (!authState.refreshToken) {
             console.error('No refresh token available');
+            setError("No refresh token available")
             //TODO: Prompt the user to re-authenticate
             return;
         }
 
+        setIsLoading(true);
+
+        // Refresh the access token
         try {
             const response = await fetch("/api/refresh_token", {
                 method: "POST",
@@ -55,54 +64,62 @@ export const SpotifyAuthProvider: React.FC<SpotifyAuthProviderProps> = ({ childr
             });
 
             const data = await response.json();
-            if (data.error) {
-                console.error('Error refreshing token:', data.error);
-                setAuthState((prev) => ({ ...prev, refreshToken: null, accessToken: null }));
-                //TODO: Prompt the user to re-authenticate
-                return;
+
+            // Catch errors from the server
+            if (!response.ok) {
+                throw new Error(data.error || "Unknown error");
             }
 
+            // Update the auth state with the new tokens
             const { accessToken, refreshToken: newRefreshToken, expiresIn } = data;
             const expiresAtDate = Date.now() + expiresIn * 1000;
 
-            // Update the auth state and local storage
+            // Set the new tokens in state and local storage
             setAuthState({ accessToken, refreshToken: newRefreshToken, expiresAt: expiresAtDate });
             localStorage.setItem('spotify_auth_state', JSON.stringify({
                 accessToken, refreshToken: newRefreshToken, expiresAt: expiresAtDate
             }));
 
-        } catch (error) {
-            console.error('Error:', error);
-            //? Handle the error as needed
+        } catch (error: any) {
+            console.error('Error during token refresh:', error);
+            setError(error.message);
+            // Catch expired refresh token and prompt re-authentication
+            if (error.message === "invalid_grant") {
+                setAuthState(initialAuthState);
+                localStorage.removeItem('spotify_auth_state');
+            }
+        } finally {
+            // Always set loading to false
+            setIsLoading(false);
         };
     }, [authState.refreshToken, setAuthState]);
 
 
-    // Persist auth state to local storage or cookies as needed
     useEffect(() => {
+        // Load auth state from local storage
         const storedState = localStorage.getItem('spotify_auth_state');
-        console.log('Stored state:', storedState)
         if (storedState) {
-            setAuthState(JSON.parse(storedState));
-            // Refresh the access token if it's near expiry or already expired
-            if (authState.expiresAt && authState.expiresAt < Date.now()) {
-                refreshAccessToken();
-            }
-        }
-        else {
+            const parsedState = JSON.parse(storedState);
+            console.log('Stored state:', storedState);
+            setAuthState(parsedState);
+        } else {
             console.log('No stored state found');
         }
-    }, [authState.expiresAt, refreshAccessToken]);
 
+        // Function to check if the access token is close to expiry and refresh it if needed
+        const manageTokenRefresh = () => {
+            if (authState.accessToken && authState.expiresAt && authState.expiresAt < Date.now() + 5 * 60 * 1000) {
+                refreshAccessToken();
+            }
+        };
+        manageTokenRefresh();
 
-    // Automatically refresh the access token when it expires
-    useEffect(() => {
-        if (authState.accessToken && authState.expiresAt) {
-            const timeout = authState.expiresAt - Date.now() - 5 * 60 * 1000; // Refresh 5 minutes before expiry
-            const timer = setTimeout(refreshAccessToken, timeout);
-            return () => clearTimeout(timer);
-        }
-    }, [authState.accessToken, authState.expiresAt, refreshAccessToken]);
+        // Set up an interval to check token expiry periodically
+        const interval = setInterval(manageTokenRefresh, 5 * 60 * 1000); // Check every 5 minutes
+
+        // Clean up the interval for unmounting or when auth state changes
+        return () => clearInterval(interval);
+    }, [authState.expiresAt, authState.accessToken, refreshAccessToken]);
 
     // Function to handle user logout
     const logout = () => {
