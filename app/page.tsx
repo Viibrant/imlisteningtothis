@@ -1,5 +1,12 @@
 "use client";
-import { Box, Button, ButtonGroup, Heading, VStack, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  Heading,
+  VStack,
+  Text,
+} from "@chakra-ui/react";
 import MyImage from "./components/MyImage";
 import { handleAuthenticate } from "./pkce";
 import React, { useState, useEffect } from "react";
@@ -43,29 +50,36 @@ export default function Home() {
     }
 
     // Fetch current playing song using the access token
-    fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+    fetch("https://api.spotify.com/v1/me/player/currently-playing", {
       headers: {
-        'Authorization': `Bearer ${accessToken}`
-      }
+        Authorization: `Bearer ${accessToken}`,
+      },
     })
-      .then(response => {
-        if (response.status > 400) {
-          throw new Error('No content or error');
+      .then((response) => {
+        if (response.status === 401) {
+          // Handle token expiration or invalid token
+          console.log("Token expired or invalid. Please re-authenticate.");
+          // Potentially trigger a re-authentication flow or notify the user
+          return; // Exit the fetch chain
+        } else if (response.status > 400) {
+          throw new Error("API error");
         } else if (response.status === 204) {
           //* 204: No Content success
           //* No currently played music.
           //TODO: Display notification? Should we default to no song playing?
           console.warn("No music playing!");
+          setCurrentSong(null);
+          return;
         }
         return response.json();
       })
-      .then(data => {
-        console.log('Current song:', data);
+      .then((data) => {
+        console.log("Current song:", data);
         //* This is where we process the data and display it
         setCurrentSong(data.item.name);
       })
-      .catch(error => {
-        console.error('Error fetching current song:', error);
+      .catch((error) => {
+        console.error("Error fetching current song:", error);
         setCurrentSong("Could not fetch current song");
       });
   };
@@ -114,16 +128,15 @@ export default function Home() {
         )}
 
         <ButtonGroup mb={2}>
-
           {isAuth() ? (
-            <Button colorScheme="purple" onClick={getCurrentSong}>
+            <Button colorScheme="green" onClick={getCurrentSong}>
               Get Song
-            </Button>) : (
-            <Button colorScheme="purple" onClick={handleAuthenticate}>
+            </Button>
+          ) : (
+            <Button colorScheme="red" onClick={handleAuthenticate}>
               Authenticate
             </Button>
-          )
-          }
+          )}
         </ButtonGroup>
         <Heading mt={3}>Generated Image</Heading>
         <MyImage src="" alt="TEST" />
